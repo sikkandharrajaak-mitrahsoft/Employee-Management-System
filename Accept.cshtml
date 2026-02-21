@@ -1,0 +1,41 @@
+<input type="button" onclick="sendto(6)" value="Accept" />
+<script>
+    function sendto(id) {
+
+        Swal.fire({
+            title: 'Enter Reason',
+            input: 'text',
+            inputPlaceholder: 'Type reason...',
+            showCancelButton: true,
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Reason is required!'
+                }
+            }
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+
+                var reasonText = result.value;
+                   var statustext="Accept";
+                fetch('/Home/Reject', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        reason: reasonText,status:statustext
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    Swal.fire('Success', 'Rejected Successfully', 'success')
+                        .then(() => location.reload());
+                });
+            }
+        });
+    }
+</script>
