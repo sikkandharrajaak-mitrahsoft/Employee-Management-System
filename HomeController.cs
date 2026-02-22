@@ -1,5 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using MyFirstApp.Models;
 using System.Text.Json; 
@@ -10,11 +12,12 @@ namespace MyFirstApp.Controllers
     public class HomeController : Controller
     {
       private readonly EmployeeRepository employeeRepository;
-     
+      private  readonly ApplicationDbContext Context;     
 
-      public HomeController(EmployeeRepository employeeRepository)
+      public HomeController(EmployeeRepository employeeRepository,ApplicationDbContext Context )
       {
         this.employeeRepository = employeeRepository;
+        this.Context=Context;
         
       }
       // [HttpPost]
@@ -42,4 +45,22 @@ namespace MyFirstApp.Controllers
      public IActionResult Accept(){
       return View();
      }
+
+     public IActionResult Employee(int id){
+      var dept=Context.dept.FromSqlRaw("Exec SelectDepartments").AsNoTracking().ToList();
+       
+       var SelectDept=new EmployeeViewModel{
+        Id=id,
+        Name="Rajaak",
+        DepartmentId=1,
+        Departments=new SelectList(dept,"id","DeptName",1)
+
+
+       };
+
+     return View(SelectDept);
+
+     }
+
+
 }}
